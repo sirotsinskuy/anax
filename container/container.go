@@ -728,7 +728,15 @@ func serviceStart(client *docker.Client,
 		}
 	}
 	if serviceConfig.HostConfig.NetworkMode != "host" {
+
 		for _, cfg := range sharedEndpoints {
+			// add service name alias for shared endpoints to make the service reachable for its dependent services
+			if cfg.Aliases != nil {
+				cfg.Aliases = append(cfg.Aliases, serviceName)
+			} else {
+				cfg.Aliases = []string{serviceName}
+			}
+
 			glog.V(5).Infof("Connecting network: %v to container id: %v", cfg.NetworkID, container.ID)
 			err := client.ConnectNetwork(cfg.NetworkID, docker.NetworkConnectionOptions{
 				Container:      container.ID,
@@ -1170,6 +1178,7 @@ func (b *ContainerWorker) ResourcesCreate(agreementId string, agreementProtocol 
 
 	// create a list of ms shared endpoints for all the workload containers to connect
 	ms_sharedendpoints := make(map[string]*docker.EndpointConfig)
+
 	if ms_networks != nil {
 		for msnw_name, ms_nw := range ms_networks {
 			ms_ep := docker.EndpointConfig{
