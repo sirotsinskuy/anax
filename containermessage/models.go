@@ -151,6 +151,8 @@ type Service struct {
 	Ports            []docker.PortBinding `json:"ports,omitempty"`
 	EphemeralPorts   []Port               `json:"ephemeral_ports,omitempty"`
 	SpecificPorts    []docker.PortBinding `json:"specific_ports,omitempty"` // obselete. for backward compatibility only, new way should use ports instead.
+	MaxMemoryMb      int64                `json:"max_memory_mb,omitempty"`
+	MaxCPUs          float32              `json:"max_cpus,omitempty"`
 }
 
 func (s *Service) AddFilesystemBinding(bind string) {
