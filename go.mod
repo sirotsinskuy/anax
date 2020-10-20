@@ -62,3 +62,5 @@ require (
 	mvdan.cc/interfacer v0.0.0-20180901003855-c20040233aed // indirect
 	mvdan.cc/lint v0.0.0-20170908181259-adc824a0674b // indirect
 )
+
+replace github.com/open-horizon/edge-sync-service => github.com/sirotsinskuy/edge-sync-service feature/org-delete-acls
