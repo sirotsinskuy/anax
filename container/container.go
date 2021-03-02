@@ -2264,6 +2264,10 @@ func (b *ContainerWorker) ResourcesRemove(agreements []string) error {
 
 	freeNets := make([]docker.Network, 0)
 	destroy := func(container *docker.APIContainers, agreementId string) error {
+		if !serviceAndWorkerTypeMatches(b.isDevInstance, container) {
+			// skip dev containers is it's non-dev instance and vice versa
+			return nil
+		}
 		if val, exists := container.Labels[LABEL_PREFIX+".service_pattern.shared"]; exists && val == "singleton" {
 			// must investigate bridge to see if other containers are still using this shared service
 
@@ -2909,4 +2913,19 @@ func DeleteLeftoverDockerVolumes(db *bolt.DB, config *config.HorizonConfig) erro
 		}
 	}
 	return nil
+}
+
+// serviceAndWorkerTypeMatches returns true if the container type matches the ContainerWorker instance type
+// (for dev and non-dev containers)
+func serviceAndWorkerTypeMatches(isDevInstance bool, container *docker.APIContainers) bool {
+	isDevContainer := false
+	if val, exists := container.Labels[LABEL_PREFIX+".dev_service"]; exists && val == "true" {
+		isDevContainer = true
+	}
+
+	if isDevInstance == isDevContainer {
+		return true
+	}
+
+	return false
 }
