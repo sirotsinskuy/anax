@@ -1403,14 +1403,12 @@ func (b *ContainerWorker) ResourcesCreate(agreementId string, agreementProtocol 
 		} else {
 			for _, net := range networks {
 				if isAnaxNetwork(&net, agreementId) {
-					fmt.Printf("Found network %v already present", net.Name)
 					glog.V(5).Infof("Found network %v already present", net.Name)
 					agBridge = &net
 					break
 				}
 			}
 			if agBridge == nil {
-				fmt.Printf("Making network %v", agreementId)
 				glog.V(5).Infof("Making network %v", agreementId)
 				newBridge, err := MakeBridge(b.client, agreementId, deployment.Infrastructure, false, b.isDevInstance)
 				if err != nil {
